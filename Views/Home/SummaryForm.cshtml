@@ -1,0 +1,89 @@
+﻿@using EmployeeApp.ModelsVM;
+@model EmployeeDetailVM;
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<form asp-action="EmployeerForm">
+
+    <div>NEW EMPLOYEE DETAILS</div>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th scope="row">First Name:</th>
+                <td>@Model.FirstName</td>
+            </tr>
+            <tr>
+                <th scope="row">Last Name:</th>
+                <td>@Model.LastName</td>
+            </tr>
+            <tr>
+                <th scope="row">Full Address:</th>
+                <td>@Model.FullAddress</td>
+            </tr>
+            <tr>
+                <th scope="row">Mailing Address:</th>
+                <td>@Model.MailingAddress</td>
+            </tr>
+            <tr>
+                <th scope="row">Phone No:</th>
+                <td>@Model.PhoneNo</td>
+            </tr>
+            <tr>
+                <th scope="row">Citizenship Status:</th>
+                <td>@Model.CitizenshipStatus</td>
+            </tr>
+            <tr>
+                <th scope="row">Employment Start Date:</th>
+                <td>@Model.EmploymentStartDate</td>
+            </tr>
+            <tr>
+                <th scope="row">Employment Type:</th>
+                <td>@Model.EmploymentType</td>
+            </tr>
+            <tr>
+                <th scope="row">Position Title:</th>
+                <td>@Model.PositionTitle</td>
+            </tr>
+            <tr>
+                <th scope="row">Position Title:</th>
+                <td>@Model.PositionTitle</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div>Emergency Contact Person:</div>
+
+    <table class="table table-bordered">
+        <tbody>
+            <tr>
+                <th scope="row">Name:</th>
+                <td>@Model.EmergencyContactPersonName</td>
+            </tr>
+            <tr>
+                <th scope="row">Relationship:</th>
+                <td>@Model.EmergencyContactPersonRelationship</td>
+            </tr>
+            <tr>
+                <th scope="row">Phone No:</th>
+                <td>@Model.EmergencyContactPersonPhoneNo</td>
+            </tr>
+        </tbody>
+
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th scope="row">Employee’s Signature:</th>
+                </tr>
+                <tr>
+                    <th scope="row">@Model.EmployeesSignature</th>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Submit button -->
+        <button type="submit" class="btn btn-primary btn-block mb-4" asp-controller="Home" asp-action="ExportToPDF">Export To PDF</button>
+</form>
+
