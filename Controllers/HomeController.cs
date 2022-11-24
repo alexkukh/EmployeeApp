@@ -5,13 +5,20 @@ using EmployeeApp.Models;
 using EmployeeApp.Interfaces;
 //using EmployeeApp.Models;
 using EmployeeApp.ModelsVM;
-using Syncfusion.HtmlConverter;
+//using Syncfusion.HtmlConverter;
+
 using Syncfusion.Pdf;
+using Syncfusion.Pdf.Graphics;
+using System.Drawing;
+using Syncfusion.Pdf.Grid;
+using System.Data;
 
 namespace EmployeeApp.Controllers;
 
 public class HomeController : Controller
 {
+    static EmployeeDetailVM g_employeeDetailVM;
+
     private readonly IEmployeeRepository _employeeRepository;
 
     public HomeController(IEmployeeRepository userRepository)
@@ -27,40 +34,130 @@ public class HomeController : Controller
 
     public IActionResult SummaryForm(EmployeeDetailVM employeeDetailVM)
     {
-        //if (!ModelState.IsValid) return View(employeeDetailVM);
-
         _employeeRepository.AddEmployee(employeeDetailVM);
+
+        g_employeeDetailVM = employeeDetailVM;
 
         return View(employeeDetailVM);
     }
-
-    //public IActionResult DownloadPDF(EmployeeDetailVM employeeDetailVM)
-    //{
-    //    return View(employeeDetailVM);
-    //}
-
+    
     public IActionResult ExportToPDF()
-    {
-        //Initialize the HTML to PDF converter with the Blink rendering engine. 
-        Syncfusion.HtmlConverter.HtmlToPdfConverter htmlConverter = new HtmlToPdfConverter();
+    { 
+        //Generate a new PDF document.
+        PdfDocument doc = new PdfDocument();
+        //Add a page.
+        PdfPage page = doc.Pages.Add();
+        //Create a PdfGrid.
+        //Create PDF graphics for the page.
+        PdfGraphics graphics = page.Graphics;
 
-        BlinkConverterSettings settings = new BlinkConverterSettings();
-        settings.ViewPortSize = new Syncfusion.Drawing.Size(1440, 0);
+      
+        PdfGrid pdfGrid = new PdfGrid();
+        //Add values to list
+        List<object> data = new List<object>();
+        Object row1 = new { FORM = "First Name:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.FirstName };
+        Object row2 = new { FORM = "Last Name:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.LastName };
+        Object row3 = new { FORM = "Full Address:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.FullAddress };
+        Object row4 = new { FORM = "Mailing Address:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.MailingAddress };
+        Object row5 = new { FORM = "Phone No:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.PhoneNo };
+        Object row6 = new { FORM = "Citizenship Status:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.CitizenshipStatus };
+        Object row7 = new { FORM = "Employment Start Dates:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmploymentStartDate };
+        Object row8 = new { FORM = "Employment Type:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmploymentType };
+        Object row9  = new { FORM = "Position Title:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.PositionTitle };
+        Object row10 = new { FORM = "Emergency Contac tPerson Name:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmergencyContactPersonName };
+        Object row11 = new { FORM = "Emergency Contact Person Relationship:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmergencyContactPersonRelationship };
+        Object row12 = new { FORM = "Emergency Contact Person Phone No:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmergencyContactPersonPhoneNo };
+        Object row13 = new { FORM = "Employees Signature:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmployeesSignature };
 
-        //Assign Blink settings to HTML converter.
-        htmlConverter.ConverterSettings = settings;
+        data.Add(row1);
+        data.Add(row2);
+        data.Add(row3);
+        data.Add(row4);
+        data.Add(row5);
+        data.Add(row6);
+        data.Add(row7);
+        data.Add(row8);
+        data.Add(row9);
+        data.Add(row10);
+        data.Add(row11);
+        data.Add(row12);
+        data.Add(row13);
 
-        //Get the current URL.
-        string url = Microsoft.AspNetCore.Http.Extensions.UriHelper.GetEncodedUrl(HttpContext.Request);
+        //Add list to IEnumerable
+        IEnumerable<object> dataTable = data;
+        //Assign data source.
+        pdfGrid.DataSource = dataTable;
 
-        url = url.Substring(0, url.LastIndexOf('/')) + "/SummaryForm";
+        //Initialize PdfGridCellStyle and set border color.
+        PdfGridCellStyle cellStyle = new PdfGridCellStyle();
+        cellStyle.Borders.All = PdfPens.LightGray;
+        cellStyle.Borders.Right = PdfPens.White;
+        cellStyle.Borders.Left  = PdfPens.White;
+        //cellStyle.Borders.Bottom = new PdfPen(new PdfColor(50, 50, 50), 1.0f);
+        cellStyle.Font = new PdfStandardFont(PdfFontFamily.TimesRoman, 12f);
+        //cellStyle.CellPadding = new PdfPaddings()
+        //cellStyle.TextBrush = new PdfSolidBrush(new PdfColor(131, 130, 136));
 
-        //Convert URL to PDF.
-        Syncfusion.Pdf.PdfDocument document = htmlConverter.Convert(url);
+        //Initialize PdfGridCellStyle and set header style.
+        PdfGridCellStyle headerStyle = new PdfGridCellStyle();
+        headerStyle.Borders.All = new PdfPen(new PdfColor(126, 151, 173));
+        headerStyle.BackgroundBrush = new PdfSolidBrush(new PdfColor(126, 151, 173));
+        headerStyle.TextBrush = PdfBrushes.White;
+        headerStyle.Font = new PdfStandardFont(PdfFontFamily.TimesRoman, 14f, PdfFontStyle.Regular);
+
+        PdfGridRow header = pdfGrid.Headers[0];
+        for (int i = 0; i < header.Cells.Count; i++)
+        {
+            if (i == 0 || i == 1)
+                header.Cells[i].StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+            else
+                header.Cells[i].StringFormat = new PdfStringFormat(PdfTextAlignment.Right, PdfVerticalAlignment.Middle);
+        }
+        header.ApplyStyle(headerStyle);
+        
+        foreach (PdfGridRow row in pdfGrid.Rows)
+        {
+            row.ApplyStyle(cellStyle);
+            for (int i = 0; i < row.Cells.Count; i++)
+            {
+                //Create and customize the string formats
+                PdfGridCell cell = row.Cells[i];
+                if (i == 1)
+                    cell.StringFormat = new PdfStringFormat(PdfTextAlignment.Left, PdfVerticalAlignment.Middle);
+                else if (i == 0)
+                    cell.StringFormat = new PdfStringFormat(PdfTextAlignment.Center, PdfVerticalAlignment.Middle);
+                else
+                    cell.StringFormat = new PdfStringFormat(PdfTextAlignment.Right, PdfVerticalAlignment.Middle);
+
+                if (i > 2)
+                {
+                    float val = float.MinValue;
+                    float.TryParse(cell.Value.ToString(), out val);
+                    cell.Value = '$' + val.ToString("0.00");
+                }
+            }
+        }
+
+        pdfGrid.Columns[0].Width = 150;
+        //pdfGrid.Columns[1].Width = 200;
+
+        //Draw grid to the page of PDF document.
+        pdfGrid.Draw(page, new Syncfusion.Drawing.PointF(10, 10));
+        //Write the PDF document to stream
         MemoryStream stream = new MemoryStream();
-        document.Save(stream);
-        return File(stream.ToArray(), System.Net.Mime.MediaTypeNames.Application.Pdf, "MVC_view_to_PDF.pdf");
+        doc.Save(stream);
+        //If the position is not set to '0' then the PDF will be empty.
+        stream.Position = 0;
+        //Close the document.
+        doc.Close(true);
+        //Defining the ContentType for pdf file.
+        string contentType = "application/pdf";
+        //Define the file name.
+        string fileName = "Output.pdf";
+        //Creates a FileContentResult object by using the file contents, content type, and file name.
+        return File(stream, contentType, fileName);
     }
+    
 
+    
 }
-

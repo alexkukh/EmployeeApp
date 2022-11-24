@@ -7,8 +7,8 @@ using EmployeeApp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AppDBContext")));
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>(); //("AWSDBConnection")));
+builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AWSDBConnection")));//("AppDBContext")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
