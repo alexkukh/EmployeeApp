@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using EmployeeApp.Models;
 
 using EmployeeApp.Interfaces;
-//using EmployeeApp.Models;
 using EmployeeApp.ModelsVM;
-//using Syncfusion.HtmlConverter;
 
 using Syncfusion.Pdf;
 using Syncfusion.Pdf.Graphics;
@@ -17,13 +15,21 @@ namespace EmployeeApp.Controllers;
 
 public class HomeController : Controller
 {
-    static EmployeeDetailVM g_employeeDetailVM;
-
     private readonly IEmployeeRepository _employeeRepository;
 
     public HomeController(IEmployeeRepository userRepository)
     {
         _employeeRepository = userRepository;
+    }
+
+    public IActionResult Index()
+    {
+        return View();
+    }
+
+    public IActionResult Privacy()
+    {
+        return View();
     }
 
     public IActionResult EmployeerForm()
@@ -36,13 +42,11 @@ public class HomeController : Controller
     {
         _employeeRepository.AddEmployee(employeeDetailVM);
 
-        g_employeeDetailVM = employeeDetailVM;
-
         return View(employeeDetailVM);
     }
     
-    public IActionResult ExportToPDF()
-    { 
+    public IActionResult ExportToPDF(EmployeeDetailVM empd)
+    {
         //Generate a new PDF document.
         PdfDocument doc = new PdfDocument();
         //Add a page.
@@ -55,19 +59,19 @@ public class HomeController : Controller
         PdfGrid pdfGrid = new PdfGrid();
         //Add values to list
         List<object> data = new List<object>();
-        Object row1 = new { FORM = "First Name:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.FirstName };
-        Object row2 = new { FORM = "Last Name:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.LastName };
-        Object row3 = new { FORM = "Full Address:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.FullAddress };
-        Object row4 = new { FORM = "Mailing Address:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.MailingAddress };
-        Object row5 = new { FORM = "Phone No:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.PhoneNo };
-        Object row6 = new { FORM = "Citizenship Status:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.CitizenshipStatus };
-        Object row7 = new { FORM = "Employment Start Dates:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmploymentStartDate };
-        Object row8 = new { FORM = "Employment Type:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmploymentType };
-        Object row9  = new { FORM = "Position Title:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.PositionTitle };
-        Object row10 = new { FORM = "Emergency Contac tPerson Name:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmergencyContactPersonName };
-        Object row11 = new { FORM = "Emergency Contact Person Relationship:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmergencyContactPersonRelationship };
-        Object row12 = new { FORM = "Emergency Contact Person Phone No:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmergencyContactPersonPhoneNo };
-        Object row13 = new { FORM = "Employees Signature:", NEW_EMPLOYEE_DETAILS = g_employeeDetailVM.EmployeesSignature };
+        Object row1 = new { FORM = "First Name:", NEW_EMPLOYEE_DETAILS = empd.FirstName };
+        Object row2 = new { FORM = "Last Name:", NEW_EMPLOYEE_DETAILS = empd.LastName };
+        Object row3 = new { FORM = "Full Address:", NEW_EMPLOYEE_DETAILS = empd.FullAddress };
+        Object row4 = new { FORM = "Mailing Address:", NEW_EMPLOYEE_DETAILS = empd.MailingAddress };
+        Object row5 = new { FORM = "Phone No:", NEW_EMPLOYEE_DETAILS = empd.PhoneNo };
+        Object row6 = new { FORM = "Citizenship Status:", NEW_EMPLOYEE_DETAILS = empd.CitizenshipStatus };
+        Object row7 = new { FORM = "Employment Start Dates:", NEW_EMPLOYEE_DETAILS = empd.EmploymentStartDate };
+        Object row8 = new { FORM = "Employment Type:", NEW_EMPLOYEE_DETAILS = empd.EmploymentType };
+        Object row9  = new { FORM = "Position Title:", NEW_EMPLOYEE_DETAILS = empd.PositionTitle };
+        Object row10 = new { FORM = "Emergency Contac tPerson Name:", NEW_EMPLOYEE_DETAILS = empd.EmergencyContactPersonName };
+        Object row11 = new { FORM = "Emergency Contact Person Relationship:", NEW_EMPLOYEE_DETAILS = empd.EmergencyContactPersonRelationship };
+        Object row12 = new { FORM = "Emergency Contact Person Phone No:", NEW_EMPLOYEE_DETAILS = empd.EmergencyContactPersonPhoneNo };
+        Object row13 = new { FORM = "Employees Signature:", NEW_EMPLOYEE_DETAILS = empd.EmployeesSignature };
 
         data.Add(row1);
         data.Add(row2);
@@ -153,11 +157,9 @@ public class HomeController : Controller
         //Defining the ContentType for pdf file.
         string contentType = "application/pdf";
         //Define the file name.
-        string fileName = "Output.pdf";
+        string fileName = "Output_Form.pdf";
         //Creates a FileContentResult object by using the file contents, content type, and file name.
         return File(stream, contentType, fileName);
     }
-    
-
-    
+ 
 }

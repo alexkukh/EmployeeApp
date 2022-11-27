@@ -1,0 +1,21 @@
+
+{
+    "region" : "ap-southeast-2",
+    "configuration" : "Debug",
+    "framework"     : "net6.0",
+    "self-contained" : false,
+    "application"    : "EmployeeApp",
+    "environment"    : "EmployeeApp-prod",
+    "app-path"       : "/",
+    "iis-website"    : "Default Web Site",
+    "enable-xray"    : false,
+    "enhanced-health-type" : "basic",
+    "additional-options"   : "\"aws:autoscaling:launchconfiguration,SecurityGroups\"=\"sg-0e70eae430489409d\";\"aws:ec2:vpc,Subnets\"=\"subnet-0ed2fa99e80ececd7\"",
+    "solution-stack"       : "64bit Windows Server Core 2019 v2.10.6 running IIS 10.0",
+    "environment-type"     : "SingleInstance",
+    "cname"                : "employeeapp-prod",
+    "instance-type"        : "t3a.medium",
+    "key-pair"             : "",
+    "instance-profile"     : "aws-elasticbeanstalk-ec2-role",
+    "service-role"         : "aws-elasticbeanstalk-service-role"
+}
